@@ -51,8 +51,15 @@ function predict() {
 }
 
 function displayResult(results) {
-    const maxIndex = results.indexOf(Math.max(...results));
-    document.getElementById('prediction').innerText = maxIndex;
+    const resultContainer = document.getElementById('prediction');
+    resultContainer.innerHTML = '';
+
+    results.forEach((value, index) => {
+        const percentage = (value * 100).toFixed(2);
+        const resultItem = document.createElement('div');
+        resultItem.innerText = `Clase ${index}: ${percentage}%`;
+        resultContainer.appendChild(resultItem);
+    });
 }
 
 window.onload = function() {
