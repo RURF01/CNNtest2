@@ -33,13 +33,33 @@ function draw(event) {
 }
 
 function preprocessCanvas(image) {
-    let tensor = tf.browser.fromPixels(image)
-        .resizeNearestNeighbor([28, 28])
+    // Obtener el contexto 2D de la imagen
+    const ctx = image.getContext('2d');
+
+    // Crear un nuevo canvas para redimensionar la imagen a 28x28
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+
+    tempCanvas.width = 28;
+    tempCanvas.height = 28;
+
+    // Dibujar la imagen en el nuevo canvas y redimensionar
+    tempCtx.drawImage(image, 0, 0, 28, 28);
+
+    // Obtener los datos de píxeles del nuevo canvas
+    const imageData = tempCtx.getImageData(0, 0, 28, 28);
+
+    // Convertir los datos de píxeles a un tensor
+    let tensor = tf.browser.fromPixels(imageData)
         .mean(2)
         .expandDims(2)
         .expandDims()
         .toFloat();
-    return tensor.div(255.0);
+
+    // Normalizar los valores de píxeles
+    tensor = tensor.div(255.0);
+
+    return tensor;
 }
 
 function predict() {
