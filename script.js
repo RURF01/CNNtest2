@@ -51,17 +51,14 @@ function preprocessCanvas(image) {
 
     // Convertir los datos de píxeles a un tensor
     let tensor = tf.browser.fromPixels(imageData)
-        .mean(2)
-        .expandDims(2)
-        .expandDims()
+        .reshape([1, 28, 28, 4])  // Agregar dimensión del lote y canal alpha
         .toFloat();
 
-    // Normalizar los valores de píxeles
-    tensor = tensor.div(255.0);
+    // Normalizar los valores de píxeles y eliminar el canal alpha
+    tensor = tensor.slice([0, 0, 0, 0], [1, 28, 28, 3]).div(255.0);
 
     return tensor;
 }
-
 function predict() {
     let tensor = preprocessCanvas(canvas);
     model.predict(tensor).data().then(prediction => {
